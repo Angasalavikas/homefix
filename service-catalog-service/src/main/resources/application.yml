@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: service-catalog-service
+  config:
+    import: configserver:http://localhost:8888
   datasource:
     url: jdbc:mysql://localhost:3306/homefix_service_catalog
     username: root
