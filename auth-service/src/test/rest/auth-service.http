@@ -1,0 +1,182 @@
+### ============================================================
+### HomeFix Auth Service — API Test Requests
+### Use with VS Code REST Client or JetBrains HTTP Client
+###
+### Two ways to test:
+###   Option A (recommended): Via API Gateway on port 8080
+###     @baseUrl = http://localhost:8080/api/auth
+###   Option B: Directly against auth-service on port 8081
+###     @baseUrl = http://localhost:8081
+###     (paths are just /register, /login, /profile — no /api/auth prefix)
+### ============================================================
+
+### Variables
+@baseUrl = http://localhost:8080/api/auth
+@authToken = <replace_with_your_jwt_token>
+
+### ------------------------------------------------------------
+### 1. Register a new Customer user
+### ------------------------------------------------------------
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "fullName": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "+12025551234",
+  "password": "SecurePass1!",
+  "role": "CUSTOMER"
+}
+
+### Expected response (201 Created):
+# {
+#   "token": "eyJhbGciOiJIUzI1NiJ9...",
+#   "tokenType": "Bearer",
+#   "id": 1,
+#   "fullName": "John Doe",
+#   "email": "john.doe@example.com",
+#   "role": "CUSTOMER"
+# }
+
+### ------------------------------------------------------------
+### 2. Register a Provider user
+### ------------------------------------------------------------
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "fullName": "Jane Smith",
+  "email": "jane.smith@example.com",
+  "phone": "+12025559876",
+  "password": "ProviderPass1!",
+  "role": "PROVIDER"
+}
+
+### ------------------------------------------------------------
+### 3. Register with invalid data (validation error demo)
+### ------------------------------------------------------------
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "fullName": "",
+  "email": "not-an-email",
+  "phone": "123",
+  "password": "weak",
+  "role": "CUSTOMER"
+}
+
+### Expected response (400 Bad Request):
+# {
+#   "timestamp": "...",
+#   "status": 400,
+#   "error": "Validation Failed",
+#   "details": {
+#     "email": "Invalid email format",
+#     "fullName": "Full name is required",
+#     "password": "Password must be between 8 and 128 characters",
+#     "phone": "Phone must be in E.164 format (e.g., +1234567890)"
+#   }
+# }
+
+### ------------------------------------------------------------
+### 4. Register with duplicate email
+### ------------------------------------------------------------
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "fullName": "John Doe Clone",
+  "email": "john.doe@example.com",
+  "phone": "+12025551234",
+  "password": "SecurePass1!",
+  "role": "CUSTOMER"
+}
+
+### Expected response (409 Conflict):
+# {
+#   "timestamp": "...",
+#   "status": 409,
+#   "error": "Email 'john.doe@example.com' is already registered"
+# }
+
+### ------------------------------------------------------------
+### 5. Login with valid credentials
+### ------------------------------------------------------------
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "SecurePass1!"
+}
+
+### Expected response (200 OK):
+# {
+#   "token": "eyJhbGciOiJIUzI1NiJ9...",
+#   "tokenType": "Bearer",
+#   "id": 1,
+#   "fullName": "John Doe",
+#   "email": "john.doe@example.com",
+#   "role": "CUSTOMER"
+# }
+
+### ------------------------------------------------------------
+### 6. Login with wrong password
+### ------------------------------------------------------------
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "WrongPassword1!"
+}
+
+### Expected response (401 Unauthorized):
+# {
+#   "timestamp": "...",
+#   "status": 401,
+#   "error": "Invalid email or password"
+# }
+
+### ------------------------------------------------------------
+### 7. Get Profile (requires token from login)
+### Copy the token from login response and paste below
+### ------------------------------------------------------------
+GET {{baseUrl}}/profile
+Authorization: Bearer {{authToken}}
+
+### Expected response (200 OK):
+# {
+#   "id": 1,
+#   "fullName": "John Doe",
+#   "email": "john.doe@example.com",
+#   "phone": "+12025551234",
+#   "role": "CUSTOMER",
+#   "createdAt": "2026-07-26T12:00:00"
+# }
+
+### ------------------------------------------------------------
+### 8. Get Profile without token (unauthorized)
+### ------------------------------------------------------------
+GET {{baseUrl}}/profile
+
+### Expected response (403 Forbidden):
+# {
+#   "timestamp": "...",
+#   "status": 403,
+#   "error": "Forbidden"
+# }
+
+### ------------------------------------------------------------
+### 9. Admin-only endpoint (requires ADMIN token)
+### ------------------------------------------------------------
+GET {{baseUrl}}/admin/users
+Authorization: Bearer {{authToken}}
+
+### Expected response for non-ADMIN (403 Forbidden):
+# {
+#   "timestamp": "...",
+#   "status": 403,
+#   "error": "Access denied"
+# }
