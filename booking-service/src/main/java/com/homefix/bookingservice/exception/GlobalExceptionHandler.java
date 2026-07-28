@@ -1,5 +1,6 @@
-package com.homefix.customerservice.exception;
+package com.homefix.bookingservice.exception;
 
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -31,14 +32,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleCustomerNotFound(CustomerNotFoundException ex) {
+    @ExceptionHandler(BookingException.class)
+    public ResponseEntity<Map<String, Object>> handleBookingException(BookingException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.NOT_FOUND.value());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
         response.put("error", ex.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -59,6 +60,28 @@ public class GlobalExceptionHandler {
         response.put("error", "Access denied");
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<Map<String, Object>> handleFeignException(FeignException ex) {
+        HttpStatus httpStatus = ex.status() >= 400
+                ? HttpStatus.valueOf(ex.status())
+                : HttpStatus.SERVICE_UNAVAILABLE;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", httpStatus.value());
+        response.put("error", "Upstream service error");
+
+        if (httpStatus == HttpStatus.NOT_FOUND) {
+            response.put("error", "Referenced resource not found in the system");
+        } else if (httpStatus.is5xxServerError()) {
+            response.put("error", "A required service is currently unavailable. Please try again later.");
+        } else {
+            response.put("error", "Service communication error");
+        }
+
+        return ResponseEntity.status(httpStatus).body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)
