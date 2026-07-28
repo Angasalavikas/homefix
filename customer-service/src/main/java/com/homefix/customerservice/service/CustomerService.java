@@ -3,6 +3,7 @@ package com.homefix.customerservice.service;
 import com.homefix.customerservice.dto.*;
 import com.homefix.customerservice.entity.Address;
 import com.homefix.customerservice.entity.Customer;
+import com.homefix.customerservice.exception.CustomerNotFoundException;
 import com.homefix.customerservice.repository.AddressRepository;
 import com.homefix.customerservice.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class CustomerService {
 
     public CustomerResponse getProfile(Long userId) {
         Customer customer = customerRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found. Please create your profile first."));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer profile not found. Please create your profile first."));
         return CustomerResponse.fromCustomer(customer);
     }
 
