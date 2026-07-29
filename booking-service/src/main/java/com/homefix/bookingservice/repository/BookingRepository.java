@@ -3,6 +3,7 @@ package com.homefix.bookingservice.repository;
 import com.homefix.bookingservice.entity.Booking;
 import com.homefix.bookingservice.entity.BookingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +23,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findByIdAndCustomerId(Long id, Long customerId);
 
     Optional<Booking> findByIdAndProviderId(Long id, Long providerId);
+
+    @Query("SELECT b.status, COUNT(b) FROM Booking b GROUP BY b.status")
+    List<Object[]> countByStatus();
 }

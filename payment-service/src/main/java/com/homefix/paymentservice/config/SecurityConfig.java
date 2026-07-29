@@ -1,4 +1,4 @@
-package com.homefix.bookingservice.config;
+package com.homefix.paymentservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
