@@ -28,6 +28,7 @@ public class BookingService {
     private final CustomerServiceClient customerServiceClient;
     private final ProviderServiceClient providerServiceClient;
     private final ServiceCatalogClient serviceCatalogClient;
+    private final NotificationServiceClient notificationServiceClient;
 
     /**
      * Valid status transitions:
@@ -90,6 +91,13 @@ public class BookingService {
 
         booking = bookingRepository.save(booking);
 
+        // Send BOOKING_CONFIRMED notification to customer
+        sendNotification(
+                customerId,
+                "BOOKING_CONFIRMED",
+                "Your booking #" + booking.getId() + " has been created successfully and is pending acceptance."
+        );
+
         return enrichResponse(booking, customer, provider, service);
     }
 
@@ -139,6 +147,21 @@ public class BookingService {
         booking.setStatus(newStatus);
         booking = bookingRepository.save(booking);
 
+        // Send notification based on status transition
+        if (newStatus == BookingStatus.ACCEPTED) {
+            sendNotification(
+                    booking.getCustomerId(),
+                    "BOOKING_ACCEPTED",
+                    "Your booking #" + booking.getId() + " has been accepted by the provider."
+            );
+        } else if (newStatus == BookingStatus.COMPLETED) {
+            sendNotification(
+                    booking.getCustomerId(),
+                    "BOOKING_COMPLETED",
+                    "Your booking #" + booking.getId() + " has been completed. Please make the payment."
+            );
+        }
+
         return enrichResponse(booking);
     }
 
@@ -159,6 +182,21 @@ public class BookingService {
         booking = bookingRepository.save(booking);
 
         return enrichResponse(booking);
+    }
+
+    // ===================== NOTIFICATION HELPER =====================
+
+    private void sendNotification(Long recipientId, String type, String message) {
+        try {
+            notificationServiceClient.createNotification(NotificationRequest.builder()
+                    .recipientId(recipientId)
+                    .type(type)
+                    .message(message)
+                    .build());
+            log.info("{} notification sent to userId {}", type, recipientId);
+        } catch (FeignException e) {
+            log.warn("Failed to send {} notification to userId {}: {}", type, recipientId, e.getMessage());
+        }
     }
 
     // ===================== PROVIDER IDENTITY RESOLUTION =====================

@@ -1,4 +1,4 @@
-package com.homefix.bookingservice.config;
+package com.homefix.notificationservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/health").permitAll()
                         .requestMatchers("/internal/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/notifications/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter,
