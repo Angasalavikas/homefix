@@ -9,11 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class ProviderController {
 
     private final ProviderService providerService;
+
+    /**
+     * GET /available — Public listing of verified providers for the booking flow.
+     */
+    @GetMapping("/available")
+    public ResponseEntity<List<ProviderResponse>> getAvailableProviders() {
+        List<ProviderResponse> responses = providerService.listVerifiedProviders();
+        return ResponseEntity.ok(responses);
+    }
 
     @PostMapping("/profile")
     public ResponseEntity<ProviderResponse> registerProfile(

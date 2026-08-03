@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "booking-service")
 public interface BookingServiceClient {
 
-    @GetMapping("/bookings/{id}")
+    @GetMapping("/internal/bookings/{id}")
     BookingResponse getBookingById(@PathVariable("id") Long id);
 }
