@@ -3,6 +3,7 @@ package com.homefix.providerservice.service;
 import com.homefix.providerservice.dto.*;
 import com.homefix.providerservice.entity.Provider;
 import com.homefix.providerservice.entity.ProviderSkill;
+import com.homefix.providerservice.entity.VerificationStatus;
 import com.homefix.providerservice.repository.ProviderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,5 +64,15 @@ public class ProviderService {
         provider.setAvailability(request.getAvailability());
         provider = providerRepository.save(provider);
         return ProviderResponse.fromProvider(provider);
+    }
+
+    /**
+     * Public listing of verified providers (used by the booking flow).
+     * Availability is included so the frontend can surface busy/offline providers.
+     */
+    public List<ProviderResponse> listVerifiedProviders() {
+        return providerRepository.findByVerificationStatus(VerificationStatus.VERIFIED).stream()
+                .map(ProviderResponse::fromProvider)
+                .collect(Collectors.toList());
     }
 }

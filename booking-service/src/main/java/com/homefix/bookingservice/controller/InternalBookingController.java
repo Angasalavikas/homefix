@@ -7,6 +7,7 @@ import com.homefix.bookingservice.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +30,17 @@ public class InternalBookingController {
                 .map(BookingResponse::fromBooking)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(bookings);
+    }
+
+    /**
+     * GET /internal/bookings/{id} — Fetch a single booking by id (used by payment-service).
+     * Returns 404 so payment-service can report "Booking not found" accurately.
+     */
+    @GetMapping("/bookings/{id}")
+    public ResponseEntity<BookingResponse> getBookingById(@PathVariable Long id) {
+        return bookingRepository.findById(id)
+                .map(booking -> ResponseEntity.ok(BookingResponse.fromBooking(booking)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

@@ -1,0 +1,21 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-08-03T20:37:07.932+05:30  INFO 13236 --- [api-gateway] [           main] c.h.apigateway.ApiGatewayApplication     : Starting ApiGatewayApplication v0.0.1-SNAPSHOT using Java 25.0.2 with PID 13236 (C:\homefix\api-gateway\target\api-gateway-0.0.1-SNAPSHOT.jar started by angas in C:\homefix\api-gateway)
+2026-08-03T20:37:07.942+05:30 DEBUG 13236 --- [api-gateway] [           main] c.h.apigateway.ApiGatewayApplication     : Running with Spring Boot v4.1.0, Spring v7.0.8
+2026-08-03T20:37:07.943+05:30  INFO 13236 --- [api-gateway] [           main] c.h.apigateway.ApiGatewayApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-08-03T20:37:08.022+05:30  INFO 13236 --- [api-gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8888
+2026-08-03T20:37:08.022+05:30  INFO 13236 --- [api-gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=api-gateway, profiles=[default], label=null, version=null, state=null
+2026-08-03T20:37:08.022+05:30 DEBUG 13236 --- [api-gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Environment api-gateway has 2 property sources with 56 properties.
+2026-08-03T20:37:10.980+05:30  WARN 13236 --- [api-gateway] [           main] o.h.v.i.m.a.CascadingMetaDataBuilder     : HV000271: Using `@Valid` on a container (java.util.List) is deprecated. You should apply the annotation on the type argument(s). Affected element: routes
+2026-08-03T20:37:11.696+05:30  INFO 13236 --- [api-gateway] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 16 endpoints beneath base path '/actuator'
+2026-08-03T20:37:12.076+05:30  WARN 13236 --- [api-gateway] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-08-03T20:37:12.860+05:30  INFO 13236 --- [api-gateway] [           main] o.s.boot.reactor.netty.NettyWebServer    : Netty started on port 8080 (http)
+2026-08-03T20:37:12.889+05:30  INFO 13236 --- [api-gateway] [           main] c.h.apigateway.ApiGatewayApplication     : Started ApiGatewayApplication in 6.5 seconds (process running for 7.209)
