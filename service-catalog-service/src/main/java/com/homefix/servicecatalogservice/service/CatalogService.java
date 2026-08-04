@@ -1,6 +1,7 @@
 package com.homefix.servicecatalogservice.service;
 
 import com.homefix.servicecatalogservice.dto.*;
+import com.homefix.servicecatalogservice.exception.ResourceNotFoundException;
 import com.homefix.servicecatalogservice.entity.Category;
 import com.homefix.servicecatalogservice.entity.ServiceItem;
 import com.homefix.servicecatalogservice.repository.CategoryRepository;
@@ -45,14 +46,14 @@ public class CatalogService {
 
     public CategoryResponse getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         return CategoryResponse.fromCategory(category);
     }
 
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
         if (request.getName() != null) category.setName(request.getName());
         if (request.getDescription() != null) category.setDescription(request.getDescription());
@@ -65,7 +66,7 @@ public class CatalogService {
     @Transactional
     public void deleteCategory(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new RuntimeException("Category not found");
+            throw new ResourceNotFoundException("Category not found");
         }
         categoryRepository.deleteById(id);
     }
@@ -102,7 +103,7 @@ public class CatalogService {
 
     public ServiceItemResponse getServiceById(Long id) {
         ServiceItem item = serviceItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Service not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
         Category category = categoryRepository.findById(item.getCategoryId()).orElse(null);
         String categoryName = category != null ? category.getName() : null;
         return ServiceItemResponse.fromServiceItemWithCategoryName(item, categoryName);
@@ -111,7 +112,7 @@ public class CatalogService {
     @Transactional
     public ServiceItemResponse updateService(Long id, ServiceItemRequest request) {
         ServiceItem item = serviceItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Service not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
 
         if (request.getCategoryId() != null && !categoryRepository.existsById(request.getCategoryId())) {
             throw new IllegalArgumentException("Category with ID " + request.getCategoryId() + " not found");
@@ -130,7 +131,7 @@ public class CatalogService {
     @Transactional
     public void deleteService(Long id) {
         if (!serviceItemRepository.existsById(id)) {
-            throw new RuntimeException("Service not found");
+            throw new ResourceNotFoundException("Service not found");
         }
         serviceItemRepository.deleteById(id);
     }

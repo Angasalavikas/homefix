@@ -56,7 +56,7 @@ export default function BookingPage() {
 
   useEffect(() => {
     let cancelled = false
-    Promise.allSettled([getServiceById(serviceId ?? ''), getAvailableProviders(), getMyAddresses()])
+    Promise.allSettled([getServiceById(serviceId ?? ''), getAvailableProviders(Number(serviceId)), getMyAddresses()])
       .then(([svc, provs, addrs]) => {
         if (cancelled) return
         if (svc.status === 'fulfilled') setService(svc.value)

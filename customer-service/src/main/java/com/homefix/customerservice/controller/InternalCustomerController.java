@@ -1,15 +1,14 @@
 package com.homefix.customerservice.controller;
 
+import com.homefix.customerservice.dto.CustomerRequest;
 import com.homefix.customerservice.dto.CustomerResponse;
 import com.homefix.customerservice.entity.Customer;
 import com.homefix.customerservice.repository.CustomerRepository;
 import com.homefix.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +26,15 @@ public class InternalCustomerController {
         CustomerResponse response = customerService.getProfile(userId);
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/customers")
+    public ResponseEntity<CustomerResponse> createCustomer(
+            @RequestBody CustomerRequest request) {
 
+        CustomerResponse response =
+                customerService.createOrUpdateProfile(request.getUserId(), request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
     /**
      * GET /internal/customers — List all customers for admin.
      */

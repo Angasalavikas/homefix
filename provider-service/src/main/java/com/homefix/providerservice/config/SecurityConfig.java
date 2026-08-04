@@ -32,9 +32,26 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/available").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                writeError(response, 401, "Unauthorized",
+                                        "Authentication is required to access this resource", request))
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                writeError(response, 403, "Forbidden", "Access denied", request))
+                )
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private void writeError(jakarta.servlet.http.HttpServletResponse response, int status,
+                            String error, String message, jakarta.servlet.http.HttpServletRequest request)
+            throws java.io.IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.getWriter().write(String.format(
+                "{\"timestamp\":\"%s\",\"status\":%d,\"error\":\"%s\",\"message\":\"%s\",\"path\":\"%s\"}",
+                java.time.LocalDateTime.now(), status, error, message, request.getRequestURI()));
     }
 }

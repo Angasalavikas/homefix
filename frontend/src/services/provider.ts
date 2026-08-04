@@ -1,11 +1,12 @@
 import api from './api'
 import type { AvailabilityStatus, Provider, ProviderRegistrationInput } from '../types'
 
-export async function getAvailableProviders(): Promise<Provider[]> {
-  const { data } = await api.get<Provider[]>('/providers/available')
-  return data
+export async function getAvailableProviders(serviceId: number): Promise<Provider[]> {
+  const { data } = await api.get<Provider[]>('/providers/available', {
+    params: { serviceId }
+  });
+  return data;
 }
-
 export async function getMyProviderProfile(): Promise<Provider> {
   const { data } = await api.get<Provider>('/providers/me')
   return data
