@@ -1,9 +1,11 @@
 package com.homefix.providerservice.service;
 
 import com.homefix.providerservice.dto.*;
+import com.homefix.providerservice.entity.AvailabilityStatus;
 import com.homefix.providerservice.entity.Provider;
 import com.homefix.providerservice.entity.ProviderSkill;
 import com.homefix.providerservice.entity.VerificationStatus;
+import com.homefix.providerservice.exception.ResourceNotFoundException;
 import com.homefix.providerservice.repository.ProviderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,20 +49,20 @@ public class ProviderService {
 
     public ProviderResponse getMyProfile(Long userId) {
         Provider provider = providerRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Provider profile not found. Please register first."));
+                .orElseThrow(() -> new ResourceNotFoundException("Provider profile not found. Please register first."));
         return ProviderResponse.fromProvider(provider);
     }
 
     public ProviderResponse getProviderById(Long id) {
         Provider provider = providerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Provider not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Provider not found"));
         return ProviderResponse.fromProvider(provider);
     }
 
     @Transactional
     public ProviderResponse updateAvailability(Long userId, AvailabilityUpdateRequest request) {
         Provider provider = providerRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Provider profile not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Provider profile not found."));
         provider.setAvailability(request.getAvailability());
         provider = providerRepository.save(provider);
         return ProviderResponse.fromProvider(provider);
@@ -70,8 +72,12 @@ public class ProviderService {
      * Public listing of verified providers (used by the booking flow).
      * Availability is included so the frontend can surface busy/offline providers.
      */
-    public List<ProviderResponse> listVerifiedProviders() {
-        return providerRepository.findByVerificationStatus(VerificationStatus.VERIFIED).stream()
+    public List<ProviderResponse> listVerifiedProviders(Long serviceId) {
+        return providerRepository
+                .findByVerificationStatusAndAvailability(
+                        VerificationStatus.VERIFIED,
+                        AvailabilityStatus.AVAILABLE)
+                .stream()
                 .map(ProviderResponse::fromProvider)
                 .collect(Collectors.toList());
     }

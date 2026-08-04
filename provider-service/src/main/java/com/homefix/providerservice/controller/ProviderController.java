@@ -21,8 +21,12 @@ public class ProviderController {
      * GET /available — Public listing of verified providers for the booking flow.
      */
     @GetMapping("/available")
-    public ResponseEntity<List<ProviderResponse>> getAvailableProviders() {
-        List<ProviderResponse> responses = providerService.listVerifiedProviders();
+    public ResponseEntity<List<ProviderResponse>> getAvailableProviders(
+            @RequestParam Long serviceId) {
+
+        List<ProviderResponse> responses =
+                providerService.listVerifiedProviders(serviceId);
+
         return ResponseEntity.ok(responses);
     }
 

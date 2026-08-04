@@ -4,6 +4,7 @@ import com.homefix.customerservice.dto.*;
 import com.homefix.customerservice.entity.Address;
 import com.homefix.customerservice.entity.Customer;
 import com.homefix.customerservice.exception.CustomerNotFoundException;
+import com.homefix.customerservice.exception.ResourceNotFoundException;
 import com.homefix.customerservice.repository.AddressRepository;
 import com.homefix.customerservice.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class CustomerService {
     @Transactional
     public AddressResponse addAddress(Long userId, AddressRequest request) {
         Customer customer = customerRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found. Please create your profile first."));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer profile not found. Please create your profile first."));
 
         Address address = Address.builder()
                 .customer(customer)
@@ -75,12 +76,12 @@ public class CustomerService {
     @Transactional
     public AddressResponse updateAddress(Long userId, Long addressId, AddressRequest request) {
         Customer customer = customerRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found."));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer profile not found."));
 
         Address address = customer.getAddresses().stream()
                 .filter(a -> a.getId().equals(addressId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
 
         if (request.getLabel() != null) address.setLabel(request.getLabel());
         if (request.getStreet() != null) address.setStreet(request.getStreet());
@@ -101,12 +102,12 @@ public class CustomerService {
     @Transactional
     public void deleteAddress(Long userId, Long addressId) {
         Customer customer = customerRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found."));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer profile not found."));
 
         Address address = customer.getAddresses().stream()
                 .filter(a -> a.getId().equals(addressId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
 
         customer.getAddresses().remove(address);
         customerRepository.save(customer);
@@ -114,7 +115,7 @@ public class CustomerService {
 
     public List<AddressResponse> getAddresses(Long userId) {
         Customer customer = customerRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found."));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer profile not found."));
 
         return customer.getAddresses().stream()
                 .map(AddressResponse::fromAddress)

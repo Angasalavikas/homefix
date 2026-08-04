@@ -24,7 +24,8 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka/
 
-# JWT fallback values (overridden by config-server when available)
+# JWT — MUST be overridden via the JWT_SECRET environment variable in production.
+# The auth-service rejects startup if JWT_SECRET is empty (Keys.hmacShaKeyFor fails).
 jwt:
-  secret: c2VjdXJlLWhvbWVmaXgtand0LXNlY3JldC1rZXktdGhhdC1pcy1hdC1sZWFzdC0yNTYtYml0cy1sb25n
+  secret: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
   expiration-ms: 86400000

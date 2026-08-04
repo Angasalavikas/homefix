@@ -37,8 +37,7 @@ spring:
 # JWT Configuration (consumed by auth-service)
 # ============================================================
 jwt:
-  # Generate a secure Base64-encoded 256-bit+ key:
-  #   On Linux/Mac: openssl rand -base64 64
-  #   On Windows (PowerShell): [Convert]::ToBase64String((1..64|%%{[byte](Get-Random -Min 0 -Max 256)}))
-  secret: c2VjdXJlLWhvbWVmaXgtand0LXNlY3JldC1rZXktdGhhdC1pcy1hdC1sZWFzdC0yNTYtYml0cy1sb25n
-  expiration-ms: 86400000
+  # MUST be set via the JWT_SECRET environment variable (all services share one key).
+  # Generate with: openssl rand -base64 64
+    secret: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+    expiration-ms: 86400000

@@ -31,6 +31,9 @@ public class Provider {
     @Column(nullable = false)
     private Integer experienceYears;
 
+    @Column(nullable = false)
+    private Long serviceId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
