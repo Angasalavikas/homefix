@@ -20,8 +20,19 @@ export default function BookingHistoryPage() {
     setLoading(true)
     setError('')
     try {
-      setBookings(await listBookings('customer'))
+      const data = await listBookings('customer')
+      setBookings(data)
     } catch (err) {
+      // Surface the real failure — an empty array must NOT be confused with
+      // an empty account. Log the raw error (status + body) for debugging.
+      const status = (err as { response?: { status?: number } })?.response?.status
+      const body = (err as { response?: { data?: unknown } })?.response?.data
+      console.error(
+        '[My Bookings] GET /bookings failed:',
+        status != null ? `HTTP ${status}` : 'no response',
+        body ?? (err instanceof Error ? err.message : err),
+      )
+      setBookings([])
       setError(getErrorMessage(err))
     } finally {
       setLoading(false)
@@ -61,13 +72,19 @@ export default function BookingHistoryPage() {
         </Button>
       </div>
 
-      {error && (
-        <div className="mb-4 rounded-lg bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">
-          {error}
-        </div>
-      )}
-
-      {bookings.length === 0 ? (
+      {/* Error and empty states are mutually exclusive: a failed request shows
+          ONLY the error (with Retry), never the "no bookings" empty state. */}
+      {error ? (
+        <Card className="p-8 text-center">
+          <p className="text-base font-semibold text-gray-900">
+            We couldn't load your bookings
+          </p>
+          <p className="mt-2 text-sm text-gray-500">{error}</p>
+          <Button variant="secondary" size="sm" className="mt-4" onClick={load}>
+            ↻ Retry
+          </Button>
+        </Card>
+      ) : bookings.length === 0 ? (
         <EmptyState
           icon="📅"
           title="No bookings yet"
@@ -89,6 +106,7 @@ export default function BookingHistoryPage() {
                     <div className="flex items-center gap-3">
                       <h2 className="text-lg font-semibold text-gray-900">{booking.serviceName}</h2>
                       <StatusBadge status={booking.status} />
+                      <StatusBadge status={booking.paymentStatus} />
                     </div>
                     <p className="mt-1 text-sm text-gray-500">
                       Booking #{booking.id} · {formatDateTime(booking.bookingDate)}

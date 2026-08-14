@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listBookings, updateBookingStatus } from '../services/booking'
 import { getMyProviderProfile } from '../services/provider'
@@ -21,20 +21,50 @@ export default function ProviderDashboardPage() {
   const [error, setError] = useState('')
   const [busyId, setBusyId] = useState<number | null>(null)
 
+  // Build the profile line only from fields that are actually present — never
+  // render "· yrs experience · ·" while the profile is missing or loading.
+  const profileMeta = useMemo(() => {
+    if (!provider) return null
+    return [
+      provider.name,
+      provider.experienceYears != null ? `${provider.experienceYears} yrs experience` : null,
+      provider.verificationStatus ? provider.verificationStatus.toLowerCase() : null,
+      provider.availability ? provider.availability.toLowerCase() : null,
+    ]
+      .filter((part): part is string => Boolean(part))
+      .join(' · ')
+  }, [provider])
+
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const [prof, book] = await Promise.all([getMyProviderProfile(), listBookings('provider')])
-      setProvider(prof)
-      setBookings(book)
-    } catch (err) {
-      // A 404 (provider profile missing) shows the register prompt instead of an error banner.
-      const status = (err as { response?: { status?: number } })?.response?.status
-      if (status === 404) {
-        setProviderMissing(true)
+      // Fetch profile and bookings independently: a bookings failure must not
+      // blank out the provider header (and vice versa).
+      const [profResult, bookResult] = await Promise.allSettled([
+        getMyProviderProfile(),
+        listBookings('provider'),
+      ])
+
+      if (profResult.status === 'fulfilled') {
+        setProvider(profResult.value)
       } else {
-        setError(getErrorMessage(err))
+        // A 404 (provider profile missing) shows the register prompt instead of an error banner.
+        const status = (profResult.reason as { response?: { status?: number } })?.response?.status
+        if (status === 404) {
+          setProviderMissing(true)
+        } else {
+          console.error('[Provider Dashboard] GET /providers/me failed:', profResult.reason)
+          setError(getErrorMessage(profResult.reason))
+        }
+      }
+
+      if (bookResult.status === 'fulfilled') {
+        setBookings(bookResult.value)
+      } else {
+        console.error('[Provider Dashboard] GET /bookings failed:', bookResult.reason)
+        setBookings([])
+        setError(getErrorMessage(bookResult.reason))
       }
     } finally {
       setLoading(false)
@@ -79,9 +109,9 @@ export default function ProviderDashboardPage() {
 
   const newRequests = bookings.filter((b) => b.status === 'PENDING')
   const active = bookings.filter((b) => activeStatuses.includes(b.status))
-  const past = bookings.filter(
-    (b) => b.status === 'COMPLETED' || b.status === 'CANCELLED',
-  )
+  // History is purely lifecycle-driven — a paid booking stays in New Requests
+  // (or In progress) until the provider advances its status to COMPLETED.
+  const past = bookings.filter((b) => b.status === 'COMPLETED' || b.status === 'CANCELLED')
 
   const nextAction = (status: BookingStatus): { label: string; next: BookingStatus } | null => {
     switch (status) {
@@ -107,6 +137,7 @@ export default function ProviderDashboardPage() {
             <div className="flex items-center gap-3">
               <h3 className="text-lg font-semibold text-gray-900">{booking.serviceName}</h3>
               <StatusBadge status={booking.status} />
+              <StatusBadge status={booking.paymentStatus} />
             </div>
             <p className="mt-1 text-sm text-gray-500">
               Booking #{booking.id} · {formatDateTime(booking.bookingDate)}
@@ -147,10 +178,7 @@ export default function ProviderDashboardPage() {
       <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Provider dashboard</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {provider?.name} · {provider?.experienceYears} yrs experience ·{' '}
-            {provider?.verificationStatus.toLowerCase()} · {provider?.availability.toLowerCase()}
-          </p>
+          {profileMeta && <p className="mt-1 text-sm text-gray-500">{profileMeta}</p>}
         </div>
         <Button variant="secondary" size="sm" onClick={load}>
           ↻ Refresh

@@ -40,6 +40,15 @@ public class Booking {
     @Builder.Default
     private BookingStatus status = BookingStatus.PENDING;
 
+    /**
+     * Payment state of the booking — independent from {@code status}.
+     * Set to PAID by payment-service only; never by the booking status flow.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20) not null default 'UNPAID'")
+    @Builder.Default
+    private PaymentStatus paymentStatus = PaymentStatus.UNPAID;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

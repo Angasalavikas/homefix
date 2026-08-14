@@ -261,6 +261,7 @@ export default function AdminDashboardPage() {
                   <th className="px-4 py-3">Price</th>
                   <th className="px-4 py-3">When</th>
                   <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Payment</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -281,11 +282,14 @@ export default function AdminDashboardPage() {
                     <td className="px-4 py-3">
                       <StatusBadge status={booking.status} />
                     </td>
+                    <td className="px-4 py-3">
+                      <StatusBadge status={booking.paymentStatus} />
+                    </td>
                   </tr>
                 ))}
                 {bookings.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
+                    <td colSpan={8} className="px-4 py-8 text-center text-gray-400">
                       No bookings yet
                     </td>
                   </tr>

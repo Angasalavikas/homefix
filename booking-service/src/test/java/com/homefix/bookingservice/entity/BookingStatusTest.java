@@ -8,6 +8,8 @@ class BookingStatusTest {
 
     @Test
     void shouldHaveAllRequiredStatusValues() {
+        // Payment state is tracked separately via PaymentStatus — it must NOT
+        // appear in the lifecycle status enum.
         assertEquals(6, BookingStatus.values().length);
         assertNotNull(BookingStatus.valueOf("PENDING"));
         assertNotNull(BookingStatus.valueOf("ACCEPTED"));
@@ -15,5 +17,13 @@ class BookingStatusTest {
         assertNotNull(BookingStatus.valueOf("STARTED"));
         assertNotNull(BookingStatus.valueOf("COMPLETED"));
         assertNotNull(BookingStatus.valueOf("CANCELLED"));
+        assertThrows(IllegalArgumentException.class, () -> BookingStatus.valueOf("PAID"));
+    }
+
+    @Test
+    void paymentStatusIsIndependentOfLifecycleStatus() {
+        assertEquals(2, PaymentStatus.values().length);
+        assertNotNull(PaymentStatus.valueOf("UNPAID"));
+        assertNotNull(PaymentStatus.valueOf("PAID"));
     }
 }

@@ -30,14 +30,29 @@ public class Payment {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
+    @Column(length = 10)
+    private String currency;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
     private PaymentStatus status = PaymentStatus.PENDING;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private PaymentMethod method;
+    /**
+     * Payment method as reported by Razorpay after checkout (card, upi,
+     * netbanking, wallet, …). Unknown until the payment is verified.
+     */
+    @Column(length = 20)
+    private String method;
+
+    @Column(length = 100)
+    private String razorpayOrderId;
+
+    @Column(length = 100)
+    private String razorpayPaymentId;
+
+    @Column(length = 255)
+    private String razorpaySignature;
 
     @Column(nullable = false)
     private LocalDateTime transactionDate;

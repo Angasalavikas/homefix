@@ -16,6 +16,7 @@ import Card from '../components/Card'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import LoadingSpinner from '../components/LoadingSpinner'
+import LocationPinButton from '../components/LocationPinButton'
 import { Field, TextInput } from '../components/FormField'
 import StatusBadge from '../components/StatusBadge'
 import type { Address, AddressInput, AvailabilityStatus, Customer, Provider } from '../types'
@@ -26,7 +27,16 @@ const availabilityLabels: Record<AvailabilityStatus, string> = {
   OFFLINE: 'Offline',
 }
 
-const emptyAddress: AddressInput = { label: '', street: '', city: '', state: '', zip: '', isDefault: false }
+const emptyAddress: AddressInput = {
+  label: '',
+  street: '',
+  city: '',
+  state: '',
+  zip: '',
+  isDefault: false,
+  latitude: null,
+  longitude: null,
+}
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -46,7 +56,7 @@ export default function ProfilePage() {
   // ---------- Provider state ----------
   const [provider, setProvider] = useState<Provider | null>(null)
   const [providerMissing, setProviderMissing] = useState(false)
-  const [regForm, setRegForm] = useState({ name: '', experienceYears: '', skills: '' })
+  const [regForm, setRegForm] = useState({ name: '', experienceYears: '', skills: '', serviceId: '', })
   const [savingReg, setSavingReg] = useState(false)
   const [regError, setRegError] = useState('')
   const [availabilityBusy, setAvailabilityBusy] = useState(false)
@@ -146,6 +156,7 @@ export default function ProfilePage() {
       const created = await registerProviderProfile({
         name: regForm.name.trim(),
         experienceYears: Number(regForm.experienceYears),
+        serviceId: Number(regForm.serviceId),
         skills: regForm.skills
           .split(',')
           .map((s) => s.trim())
@@ -316,6 +327,21 @@ export default function ProfilePage() {
                   {addressError}
                 </p>
               )}
+              <div className="flex justify-end">
+                <LocationPinButton
+                  onLocated={({ latitude, longitude, address }) =>
+                    setAddressForm((prev) => ({
+                      ...prev,
+                      latitude,
+                      longitude,
+                      street: address.street || prev.street,
+                      city: address.city || prev.city,
+                      state: address.state || prev.state,
+                      zip: address.zip || prev.zip,
+                    }))
+                  }
+                />
+              </div>
               <Field label="Label">
                 <TextInput
                   placeholder="e.g. Home"
@@ -402,6 +428,22 @@ export default function ProfilePage() {
                       setRegForm({ ...regForm, experienceYears: e.target.value })
                     }
                   />
+                </Field>
+                <Field label="Service">
+                  <select
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                      value={regForm.serviceId}
+                      onChange={(e) =>
+                          setRegForm({ ...regForm, serviceId: e.target.value })
+                      }
+                  >
+                    <option value="">Select Service</option>
+                    <option value="1">Plumbing</option>
+                    <option value="2">Electrical</option>
+                    <option value="3">Painting</option>
+                    <option value="4">Cleaning</option>
+                    <option value="5">AC Repair</option>
+                  </select>
                 </Field>
                 <Field label="Skills" hint="Comma-separated, e.g. plumbing, faucet repair">
                   <TextInput

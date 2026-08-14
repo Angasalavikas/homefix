@@ -2,6 +2,7 @@ package com.homefix.bookingservice.dto;
 
 import com.homefix.bookingservice.entity.Booking;
 import com.homefix.bookingservice.entity.BookingStatus;
+import com.homefix.bookingservice.entity.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class BookingResponse {
     private LocalDateTime bookingDate;
     private String address;
     private BookingStatus status;
+    private PaymentStatus paymentStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -40,6 +42,7 @@ public class BookingResponse {
                 .bookingDate(booking.getBookingDate())
                 .address(booking.getAddress())
                 .status(booking.getStatus())
+                .paymentStatus(booking.getPaymentStatus())
                 .createdAt(booking.getCreatedAt())
                 .updatedAt(booking.getUpdatedAt())
                 .build();
