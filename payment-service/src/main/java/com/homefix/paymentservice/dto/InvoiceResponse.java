@@ -1,6 +1,5 @@
 package com.homefix.paymentservice.dto;
 
-import com.homefix.paymentservice.entity.PaymentMethod;
 import com.homefix.paymentservice.entity.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +25,7 @@ public class InvoiceResponse {
     private String bookingAddress;
     private BigDecimal amount;
     private PaymentStatus paymentStatus;
-    private PaymentMethod paymentMethod;
+    private String paymentMethod;
     private LocalDateTime transactionDate;
     private LocalDateTime generatedAt;
 }

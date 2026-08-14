@@ -5,6 +5,7 @@ import com.homefix.bookingservice.dto.BookingResponse;
 import com.homefix.bookingservice.dto.StatusUpdateRequest;
 import com.homefix.bookingservice.entity.Booking;
 import com.homefix.bookingservice.entity.BookingStatus;
+import com.homefix.bookingservice.entity.PaymentStatus;
 import com.homefix.bookingservice.exception.BookingException;
 import com.homefix.bookingservice.feign.*;
 import com.homefix.bookingservice.repository.BookingRepository;
@@ -31,7 +32,8 @@ public class BookingService {
     private final NotificationServiceClient notificationServiceClient;
 
     /**
-     * Valid status transitions:
+     * Valid status transitions (payment does NOT appear here — payment is tracked
+     * separately via {@code paymentStatus} and never changes the booking status):
      * PENDING     -> ACCEPTED, CANCELLED
      * ACCEPTED    -> ON_THE_WAY, CANCELLED
      * ON_THE_WAY  -> STARTED
@@ -124,6 +126,19 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    // ===================== LIST ALL (internal — admin dashboard) =====================
+
+    /**
+     * All bookings, each enriched with customer/provider/service details.
+     * Served to admin-service via GET /internal/bookings. Enrichment failures
+     * degrade gracefully (fields stay null) but are logged loudly.
+     */
+    public List<BookingResponse> listAllBookings() {
+        return bookingRepository.findAll().stream()
+                .map(this::enrichResponse)
+                .collect(Collectors.toList());
+    }
+
     // ===================== UPDATE STATUS (Provider or Admin) =====================
 
     @Transactional
@@ -163,6 +178,36 @@ public class BookingService {
         }
 
         return enrichResponse(booking);
+    }
+
+    // ===================== INTERNAL PAYMENT STATUS UPDATE (payment-service) =====================
+
+    /**
+     * Internal update used by payment-service after a successful payment.
+     * Updates ONLY {@code paymentStatus} (UNPAID -> PAID) — the booking's
+     * lifecycle {@code status} is never touched. No owner/role checks.
+     */
+    @Transactional
+    public BookingResponse internalUpdatePaymentStatus(Long bookingId, String paymentStatus) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingException("Booking not found with ID: " + bookingId));
+
+        PaymentStatus newPaymentStatus = parsePaymentStatus(paymentStatus);
+        booking.setPaymentStatus(newPaymentStatus);
+        booking = bookingRepository.save(booking);
+        log.info("Booking {} paymentStatus updated internally to {} (status unchanged: {})",
+                bookingId, newPaymentStatus, booking.getStatus());
+
+        return enrichResponse(booking);
+    }
+
+    private PaymentStatus parsePaymentStatus(String paymentStatus) {
+        try {
+            return PaymentStatus.valueOf(paymentStatus.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BookingException("Invalid paymentStatus value: " + paymentStatus +
+                    ". Allowed values: UNPAID, PAID");
+        }
     }
 
     // ===================== CANCEL (Customer) =====================
@@ -237,6 +282,18 @@ public class BookingService {
 
     // ===================== ENRICHMENT =====================
 
+    /**
+     * Human-readable target of a failed Feign call, e.g.
+     * "GET http://customer-service/internal/users/5" — makes enrichment
+     * failures traceable (wrong service name, port, or ID) in the logs.
+     */
+    private String feignTarget(FeignException e) {
+        if (e.request() != null && e.request().url() != null) {
+            return e.request().method() + " " + e.request().url();
+        }
+        return e.getClass().getSimpleName();
+    }
+
     private BookingResponse enrichResponse(Booking booking) {
         BookingResponse response = BookingResponse.fromBooking(booking);
 
@@ -244,14 +301,16 @@ public class BookingService {
             CustomerResponse customer = customerServiceClient.getCustomerByUserId(booking.getCustomerId());
             enrichCustomerInfo(response, customer);
         } catch (FeignException e) {
-            log.warn("Failed to enrich customer info for booking {}: {}", booking.getId(), e.getMessage());
+            log.error("Enrichment failed for booking {} — customer-service {}: {}",
+                    booking.getId(), feignTarget(e), e.getMessage());
         }
 
         try {
             ProviderResponse provider = providerServiceClient.getProviderById(booking.getProviderId());
             response.setProviderName(provider.getName());
         } catch (FeignException e) {
-            log.warn("Failed to enrich provider info for booking {}: {}", booking.getId(), e.getMessage());
+            log.error("Enrichment failed for booking {} — provider-service {}: {}",
+                    booking.getId(), feignTarget(e), e.getMessage());
         }
 
         try {
@@ -259,7 +318,8 @@ public class BookingService {
             response.setServiceName(service.getName());
             response.setServicePrice(service.getBasePrice());
         } catch (FeignException e) {
-            log.warn("Failed to enrich service info for booking {}: {}", booking.getId(), e.getMessage());
+            log.error("Enrichment failed for booking {} — service-catalog-service {}: {}",
+                    booking.getId(), feignTarget(e), e.getMessage());
         }
 
         return response;

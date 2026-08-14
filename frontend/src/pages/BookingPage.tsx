@@ -3,15 +3,18 @@ import { Link, useParams } from 'react-router-dom'
 import { getServiceById } from '../services/catalog'
 import { getAvailableProviders } from '../services/provider'
 import { getMyAddresses } from '../services/customer'
-import { createBooking, processPayment } from '../services/booking'
+import { createBooking, createRazorpayOrder, verifyPayment } from '../services/booking'
+import { loadRazorpayCheckoutScript, openRazorpayCheckout } from '../services/razorpay'
 import { getErrorMessage } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 import Card from '../components/Card'
 import Button from '../components/Button'
+import LocationPinButton from '../components/LocationPinButton'
 import { Field, Select, TextInput } from '../components/FormField'
 import LoadingSpinner from '../components/LoadingSpinner'
 import StatusBadge from '../components/StatusBadge'
 import { formatCurrency, toLocalInputValue } from '../utils/format'
-import type { Address, Booking, Payment, PaymentMethod, Provider, ServiceItem } from '../types'
+import type { Address, Booking, Payment, Provider, ServiceItem } from '../types'
 
 interface FieldErrors {
   provider?: string
@@ -31,6 +34,7 @@ function normalizeLocalDateTime(value: string): string {
 
 export default function BookingPage() {
   const { serviceId } = useParams<{ serviceId: string }>()
+  const { user } = useAuth()
 
   const [service, setService] = useState<ServiceItem | null>(null)
   const [providers, setProviders] = useState<Provider[]>([])
@@ -47,9 +51,9 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState(false)
 
   const [createdBooking, setCreatedBooking] = useState<Booking | null>(null)
-  const [method, setMethod] = useState<PaymentMethod>('CARD')
   const [paying, setPaying] = useState(false)
   const [payment, setPayment] = useState<Payment | null>(null)
+  const [paymentSkipped, setPaymentSkipped] = useState(false)
   const [actionError, setActionError] = useState('')
 
   const minDate = useMemo(() => toLocalInputValue(new Date(Date.now() + 60 * 60 * 1000)), [])
@@ -142,13 +146,36 @@ export default function BookingPage() {
     if (!createdBooking) return
     setPaying(true)
     setActionError('')
+    setPaymentSkipped(false)
     try {
-      const result = await processPayment({
+      // 1) Create a Razorpay Order server-side
+      const order = await createRazorpayOrder({
         bookingId: createdBooking.id,
         amount: createdBooking.servicePrice,
-        method,
       })
-      setPayment(result)
+      // 2) Open Razorpay Checkout with the returned order details
+      await loadRazorpayCheckoutScript()
+      const outcome = await openRazorpayCheckout({
+        order,
+        bookingId: createdBooking.id,
+        prefill: { name: user?.fullName, email: user?.email },
+      })
+
+      if (outcome.status === 'success') {
+        // 3) Verify the signature server-side — never trust the callback alone
+        const verified = await verifyPayment({
+          razorpayOrderId: outcome.razorpayOrderId,
+          razorpayPaymentId: outcome.razorpayPaymentId,
+          razorpaySignature: outcome.razorpaySignature,
+        })
+        setPayment(verified)
+      } else if (outcome.status === 'cancelled') {
+        // User closed the modal — booking stays confirmed, payment stays PENDING
+        setPaymentSkipped(true)
+      } else {
+        setActionError(outcome.reason ?? 'Payment failed. Please try again.')
+        setPaymentSkipped(true)
+      }
     } catch (err) {
       setActionError(getErrorMessage(err))
     } finally {
@@ -225,30 +252,35 @@ export default function BookingPage() {
             >
               <p className="font-semibold">
                 Payment {payment.status === 'SUCCESS' ? 'successful' : payment.status.toLowerCase()} —
-                {payment.method} · {formatCurrency(payment.amount)}
+                {payment.method ? payment.method.toUpperCase() : 'Online'} ·{' '}
+                {formatCurrency(payment.amount)}
               </p>
               <p className="mt-1 text-xs opacity-80">
                 Payment #{payment.id} · {new Date(payment.createdAt).toLocaleString()}
               </p>
+              {payment.razorpayPaymentId && (
+                <p className="mt-1 text-xs opacity-80">
+                  Razorpay payment ID: {payment.razorpayPaymentId}
+                </p>
+              )}
             </div>
           ) : (
             <div className="mt-6">
-              <h2 className="text-base font-semibold text-gray-900">Pay now (optional)</h2>
-              <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-                <div className="flex-1">
-                  <Select value={method} onChange={(e) => setMethod(e.target.value as PaymentMethod)}>
-                    <option value="CARD">💳 Card</option>
-                    <option value="UPI">📱 UPI</option>
-                    <option value="CASH">💵 Cash on completion</option>
-                  </Select>
-                </div>
+              <h2 className="text-base font-semibold text-gray-900">Pay now</h2>
+              <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button onClick={handlePay} loading={paying}>
                   Pay {formatCurrency(createdBooking.servicePrice)}
                 </Button>
+                <p className="text-xs text-gray-400">
+                  Secure payment via Razorpay (test mode — no real charge).
+                </p>
               </div>
-              <p className="mt-2 text-xs text-gray-400">
-                Mock payment — no real charge is made.
-              </p>
+              {paymentSkipped && (
+                <div className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  Payment not completed — no charge was made. Your booking stays confirmed and
+                  you can retry the payment anytime.
+                </div>
+              )}
             </div>
           )}
 
@@ -371,6 +403,19 @@ export default function BookingPage() {
 
             {addressMode === 'new' && (
               <div className="space-y-4 rounded-xl bg-gray-50 p-4">
+                <div className="flex justify-end">
+                  <LocationPinButton
+                    onLocated={({ address }) =>
+                      setNewAddress((prev) => ({
+                        ...prev,
+                        street: address.street || prev.street,
+                        city: address.city || prev.city,
+                        state: address.state || prev.state,
+                        zip: address.zip || prev.zip,
+                      }))
+                    }
+                  />
+                </div>
                 <Field label="Address label" error={errors.newAddress}>
                   <TextInput
                     placeholder="e.g. Home, Office"

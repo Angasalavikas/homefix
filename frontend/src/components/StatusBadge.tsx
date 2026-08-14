@@ -5,6 +5,9 @@ const statusStyles: Record<string, { label: string; className: string }> = {
   STARTED: { label: 'Started', className: 'bg-violet-50 text-violet-700 ring-violet-600/20' },
   COMPLETED: { label: 'Completed', className: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' },
   CANCELLED: { label: 'Cancelled', className: 'bg-rose-50 text-rose-700 ring-rose-600/20' },
+  // Booking payment status (independent of lifecycle status)
+  PAID: { label: 'Paid', className: 'bg-teal-50 text-teal-700 ring-teal-600/20' },
+  UNPAID: { label: 'Unpaid', className: 'bg-gray-50 text-gray-600 ring-gray-500/20' },
   // Provider verification statuses
   VERIFIED: { label: 'Verified', className: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' },
   REJECTED: { label: 'Rejected', className: 'bg-rose-50 text-rose-700 ring-rose-600/20' },

@@ -30,6 +30,7 @@ public class ProviderService {
                 .userId(userId)
                 .name(request.getName())
                 .experienceYears(request.getExperienceYears())
+                .serviceId(request.getServiceId())
                 .build();
 
         if (request.getSkills() != null) {

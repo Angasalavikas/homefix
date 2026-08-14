@@ -23,7 +23,7 @@ behind a Spring Cloud Gateway, with a single-page React frontend.
 4. **Booking** — customers pick a service/provider/date/address; providers advance status
    (`PENDING → ACCEPTED → ON_THE_WAY → STARTED → COMPLETED`); customers can cancel from
    `PENDING`/`ACCEPTED`.
-5. **Payment** — mock payment gateway (`SUCCESS`), invoices, and revenue aggregation.
+5. **Payment** — Razorpay-powered checkout (orders + server-side signature verification), invoices, and revenue aggregation.
 6. **Notifications** — created automatically on booking/payment events via Feign; the frontend
    bell shows unread counts and supports mark-as-read.
 7. **Admin dashboard** — live counts aggregated across services via Feign.
@@ -85,7 +85,7 @@ The generic `500` fallback never leaks exception messages or stack traces.
 | **provider-service** | 8083 | Provider profiles, skills, availability, verification |
 | **service-catalog-service** | 8084 | Categories & service items, search |
 | **booking-service**  | 8085 | Booking lifecycle & status transition validation |
-| **payment-service**  | 8086 | Mock payments, history, invoices, revenue |
+| **payment-service**  | 8086 | Razorpay payments, history, invoices, revenue |
 | **notification-service** | 8087 | Notifications (internal creation + user-facing queries) |
 | **admin-service**    | 8088 | Admin dashboard aggregation & provider verification |
 | **frontend**         | 5173 | React SPA (Vite dev server proxies `/api` → `:8080`) |
@@ -318,7 +318,7 @@ homefix/
 ├── provider-service/         # Provider profiles & verification (port 8083)
 ├── service-catalog-service/  # Categories & services (port 8084)
 ├── booking-service/          # Booking lifecycle (port 8085)
-├── payment-service/          # Mock payments & invoices (port 8086)
+├── payment-service/          # Razorpay payments & invoices (port 8086)
 ├── notification-service/     # Notifications (port 8087)
 ├── admin-service/            # Admin aggregation (port 8088)
 ├── frontend/

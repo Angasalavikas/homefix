@@ -1,5 +1,13 @@
 import api from './api'
-import type { Booking, BookingInput, BookingStatus, Payment, PaymentInput } from '../types'
+import type {
+  Booking,
+  BookingInput,
+  BookingStatus,
+  CreateRazorpayOrderInput,
+  Payment,
+  RazorpayOrder,
+  VerifyPaymentInput,
+} from '../types'
 
 export async function createBooking(payload: BookingInput): Promise<Booking> {
   const { data } = await api.post<Booking>('/bookings', payload)
@@ -24,8 +32,15 @@ export async function cancelBooking(id: number): Promise<Booking> {
   return data
 }
 
-export async function processPayment(payload: PaymentInput): Promise<Payment> {
-  const { data } = await api.post<Payment>('/payments', payload)
+/** Step 1 of checkout: create a Razorpay Order for the booking. */
+export async function createRazorpayOrder(payload: CreateRazorpayOrderInput): Promise<RazorpayOrder> {
+  const { data } = await api.post<RazorpayOrder>('/payments/create-order', payload)
+  return data
+}
+
+/** Step 2 of checkout: verify the payment signature server-side. */
+export async function verifyPayment(payload: VerifyPaymentInput): Promise<Payment> {
+  const { data } = await api.post<Payment>('/payments/verify', payload)
   return data
 }
 

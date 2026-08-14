@@ -64,6 +64,8 @@ export interface Address {
   state: string
   zip: string
   isDefault: boolean
+  latitude?: number | null
+  longitude?: number | null
 }
 
 export interface AddressInput {
@@ -73,6 +75,8 @@ export interface AddressInput {
   state: string
   zip: string
   isDefault?: boolean
+  latitude?: number | null
+  longitude?: number | null
 }
 
 export interface Customer {
@@ -109,6 +113,7 @@ export interface Provider {
 export interface ProviderRegistrationInput {
   name: string
   experienceYears: number
+  serviceId: number
   skills: string[]
 }
 
@@ -120,6 +125,13 @@ export type BookingStatus =
   | 'STARTED'
   | 'COMPLETED'
   | 'CANCELLED'
+
+/**
+ * Payment state of a booking — tracked separately from {@link BookingStatus}.
+ * A booking can be PENDING+PAID, ACCEPTED+PAID, etc.; paying never advances
+ * the lifecycle status.
+ */
+export type BookingPaymentStatus = 'UNPAID' | 'PAID'
 
 export interface Booking {
   id: number
@@ -134,6 +146,7 @@ export interface Booking {
   bookingDate: string
   address: string
   status: BookingStatus
+  paymentStatus: BookingPaymentStatus
   createdAt: string
   updatedAt: string
 }
@@ -146,7 +159,6 @@ export interface BookingInput {
 }
 
 // ---------- Payment ----------
-export type PaymentMethod = 'CARD' | 'UPI' | 'CASH'
 export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED'
 
 export interface Payment {
@@ -154,16 +166,32 @@ export interface Payment {
   bookingId: number
   customerId: number
   amount: number
+  currency?: string | null
   status: PaymentStatus
-  method: PaymentMethod
+  method?: string | null
+  razorpayOrderId?: string | null
+  razorpayPaymentId?: string | null
+  razorpaySignature?: string | null
   transactionDate: string
   createdAt: string
 }
 
-export interface PaymentInput {
+export interface CreateRazorpayOrderInput {
   bookingId: number
   amount: number
-  method: PaymentMethod
+}
+
+export interface RazorpayOrder {
+  orderId: string
+  amount: number
+  currency: string
+  razorpayKeyId: string
+}
+
+export interface VerifyPaymentInput {
+  razorpayOrderId: string
+  razorpayPaymentId: string
+  razorpaySignature: string
 }
 
 // ---------- Notifications ----------
@@ -216,6 +244,7 @@ export interface AdminBooking {
   bookingDate: string
   address: string
   status: string
+  paymentStatus: string
   createdAt: string
   updatedAt: string
 }

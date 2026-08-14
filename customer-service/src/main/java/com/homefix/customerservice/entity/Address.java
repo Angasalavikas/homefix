@@ -37,6 +37,13 @@ public class Address {
     @Column(nullable = false, length = 20)
     private String zip;
 
+    /** Optional geolocation — only set when the user shares their location. */
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     @Column(nullable = false)
     @Builder.Default
     private Boolean isDefault = false;

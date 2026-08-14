@@ -37,6 +37,22 @@ api.interceptors.response.use(
 )
 
 /**
+ * HTTP status names that carry no useful detail on their own — prefer the
+ * backend's `message` field over these.
+ */
+const GENERIC_ERROR_NAMES = new Set([
+  'Bad Request',
+  'Unauthorized',
+  'Forbidden',
+  'Not Found',
+  'Method Not Allowed',
+  'Conflict',
+  'Internal Server Error',
+  'Service Unavailable',
+  'Gateway Timeout',
+])
+
+/**
  * Best-effort extraction of a human-readable message from the backend's
  * GlobalExceptionHandler shape: { status, error, details, message }.
  */
@@ -44,7 +60,12 @@ export function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as Record<string, unknown> | undefined
     if (data && typeof data === 'object') {
-      if (typeof data.error === 'string' && data.error !== 'Validation Failed') {
+      if (
+        typeof data.error === 'string' &&
+        data.error !== 'Validation Failed' &&
+        !GENERIC_ERROR_NAMES.has(data.error)
+      ) {
+        // A specific business error (e.g. "Booking not found with ID: 5")
         return data.error
       }
       const details = data.details

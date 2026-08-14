@@ -1,18 +1,17 @@
 package com.homefix.bookingservice.controller;
 
 import com.homefix.bookingservice.dto.BookingResponse;
+import com.homefix.bookingservice.dto.InternalPaymentStatusUpdateRequest;
 import com.homefix.bookingservice.entity.Booking;
 import com.homefix.bookingservice.entity.BookingStatus;
 import com.homefix.bookingservice.repository.BookingRepository;
+import com.homefix.bookingservice.service.BookingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/internal")
@@ -20,16 +19,14 @@ import java.util.stream.Collectors;
 public class InternalBookingController {
 
     private final BookingRepository bookingRepository;
+    private final BookingService bookingService;
 
     /**
      * GET /internal/bookings — List all bookings for admin.
      */
     @GetMapping("/bookings")
     public ResponseEntity<List<BookingResponse>> getAllBookings() {
-        List<BookingResponse> bookings = bookingRepository.findAll().stream()
-                .map(BookingResponse::fromBooking)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(bookings);
+        return ResponseEntity.ok(bookingService.listAllBookings());
     }
 
     /**
@@ -41,6 +38,19 @@ public class InternalBookingController {
         return bookingRepository.findById(id)
                 .map(booking -> ResponseEntity.ok(BookingResponse.fromBooking(booking)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * PUT /internal/bookings/{id}/payment-status — Internal update used by
+     * payment-service after a successful payment. Updates ONLY paymentStatus
+     * (UNPAID/PAID); the booking's lifecycle status is never changed here.
+     */
+    @PutMapping("/bookings/{id}/payment-status")
+    public ResponseEntity<BookingResponse> updateBookingPaymentStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody InternalPaymentStatusUpdateRequest request) {
+        BookingResponse response = bookingService.internalUpdatePaymentStatus(id, request.getPaymentStatus());
+        return ResponseEntity.ok(response);
     }
 
     /**

@@ -17,6 +17,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
+razorpay:
+  # Read from environment variables — never commit real keys.
+  # Get test keys from https://dashboard.razorpay.com/app/keys (Test Mode).
+  key-id: ${RAZORPAY_KEY_ID:}
+  key-secret: ${RAZORPAY_KEY_SECRET:}
+
 eureka:
   client:
     service-url:

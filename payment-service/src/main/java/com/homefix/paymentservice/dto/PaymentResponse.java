@@ -1,7 +1,6 @@
 package com.homefix.paymentservice.dto;
 
 import com.homefix.paymentservice.entity.Payment;
-import com.homefix.paymentservice.entity.PaymentMethod;
 import com.homefix.paymentservice.entity.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +20,12 @@ public class PaymentResponse {
     private Long bookingId;
     private Long customerId;
     private BigDecimal amount;
+    private String currency;
     private PaymentStatus status;
-    private PaymentMethod method;
+    private String method;
+    private String razorpayOrderId;
+    private String razorpayPaymentId;
+    private String razorpaySignature;
     private LocalDateTime transactionDate;
     private LocalDateTime createdAt;
 
@@ -32,8 +35,12 @@ public class PaymentResponse {
                 .bookingId(payment.getBookingId())
                 .customerId(payment.getCustomerId())
                 .amount(payment.getAmount())
+                .currency(payment.getCurrency())
                 .status(payment.getStatus())
                 .method(payment.getMethod())
+                .razorpayOrderId(payment.getRazorpayOrderId())
+                .razorpayPaymentId(payment.getRazorpayPaymentId())
+                .razorpaySignature(payment.getRazorpaySignature())
                 .transactionDate(payment.getTransactionDate())
                 .createdAt(payment.getCreatedAt())
                 .build();

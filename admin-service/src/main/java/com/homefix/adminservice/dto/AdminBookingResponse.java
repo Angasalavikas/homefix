@@ -25,6 +25,7 @@ public class AdminBookingResponse {
     private LocalDateTime bookingDate;
     private String address;
     private String status;
+    private String paymentStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

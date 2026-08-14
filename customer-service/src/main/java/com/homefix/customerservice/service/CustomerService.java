@@ -60,6 +60,8 @@ public class CustomerService {
                 .city(request.getCity())
                 .state(request.getState())
                 .zip(request.getZip())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
                 .isDefault(request.getIsDefault() != null && request.getIsDefault())
                 .build();
 
@@ -88,6 +90,8 @@ public class CustomerService {
         if (request.getCity() != null) address.setCity(request.getCity());
         if (request.getState() != null) address.setState(request.getState());
         if (request.getZip() != null) address.setZip(request.getZip());
+        if (request.getLatitude() != null) address.setLatitude(request.getLatitude());
+        if (request.getLongitude() != null) address.setLongitude(request.getLongitude());
         if (request.getIsDefault() != null) {
             if (Boolean.TRUE.equals(request.getIsDefault())) {
                 customer.getAddresses().forEach(a -> a.setIsDefault(false));

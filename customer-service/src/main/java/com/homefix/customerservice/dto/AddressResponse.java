@@ -18,6 +18,8 @@ public class AddressResponse {
     private String city;
     private String state;
     private String zip;
+    private Double latitude;
+    private Double longitude;
     private Boolean isDefault;
 
     public static AddressResponse fromAddress(Address address) {
@@ -28,6 +30,8 @@ public class AddressResponse {
                 .city(address.getCity())
                 .state(address.getState())
                 .zip(address.getZip())
+                .latitude(address.getLatitude())
+                .longitude(address.getLongitude())
                 .isDefault(address.getIsDefault())
                 .build();
     }
