@@ -1,0 +1,23 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-08-03T22:26:12.676+05:30  INFO 29528 --- [api-gateway] [           main] c.h.apigateway.ApiGatewayApplication     : Starting ApiGatewayApplication v0.0.1-SNAPSHOT using Java 25.0.2 with PID 29528 (C:\homefix\api-gateway\target\api-gateway-0.0.1-SNAPSHOT.jar started by angas in C:\homefix\api-gateway)
+2026-08-03T22:26:12.681+05:30 DEBUG 29528 --- [api-gateway] [           main] c.h.apigateway.ApiGatewayApplication     : Running with Spring Boot v4.1.0, Spring v7.0.8
+2026-08-03T22:26:12.682+05:30  INFO 29528 --- [api-gateway] [           main] c.h.apigateway.ApiGatewayApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-08-03T22:26:15.624+05:30  WARN 29528 --- [api-gateway] [           main] o.h.v.i.m.a.CascadingMetaDataBuilder     : HV000271: Using `@Valid` on a container (java.util.List) is deprecated. You should apply the annotation on the type argument(s). Affected element: routes
+2026-08-03T22:26:15.688+05:30  WARN 29528 --- [api-gateway] [           main] o.h.v.i.m.a.CascadingMetaDataBuilder     : HV000271: Using `@Valid` on a container (java.util.List) is deprecated. You should apply the annotation on the type argument(s). Affected element: filters
+2026-08-03T22:26:15.689+05:30  WARN 29528 --- [api-gateway] [           main] o.h.v.i.m.a.CascadingMetaDataBuilder     : HV000271: Using `@Valid` on a container (java.util.List) is deprecated. You should apply the annotation on the type argument(s). Affected element: predicates
+2026-08-03T22:26:16.231+05:30  INFO 29528 --- [api-gateway] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-08-03T22:26:16.659+05:30  WARN 29528 --- [api-gateway] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-08-03T22:26:17.454+05:30  INFO 29528 --- [api-gateway] [           main] o.s.boot.reactor.netty.NettyWebServer    : Netty started on port 8080 (http)
+2026-08-03T22:26:17.517+05:30  INFO 29528 --- [api-gateway] [           main] c.h.apigateway.ApiGatewayApplication     : Started ApiGatewayApplication in 6.533 seconds (process running for 7.224)
+2026-08-03T23:32:50.752+05:30  WARN 29528 --- [api-gateway] [reshExecutor-%d] c.n.d.s.t.d.RetryableEurekaHttpClient    : Request execution failed with message: I/O error on GET request for "http://localhost:8761/eureka/apps/delta": Connect to http://localhost:8761 failed: Connection refused: getsockopt
+2026-08-03T23:32:50.788+05:30  WARN 29528 --- [api-gateway] [reshExecutor-%d] c.n.d.s.t.d.RetryableEurekaHttpClient    : Request execution failed with message: I/O error on GET request for "http://localhost:8761/eureka/apps/delta": Connect to http://localhost:8761 failed: Connection refused: getsockopt
+2026-08-03T23:32:55.833+05:30  WARN 29528 --- [api-gateway] [reshExecutor-%d] c.n.d.s.t.d.RetryableEurekaHttpClient    : Request execution failed with message: I/O error on GET request for "http://localhost:8761/eureka/apps/delta": Connect to http://localhost:8761 failed: Connection refused: getsockopt

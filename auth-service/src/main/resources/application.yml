@@ -1,0 +1,31 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  config:
+    import: configserver:http://localhost:8888
+  datasource:
+    url: jdbc:mysql://localhost:3306/homefix_auth
+    username: root
+    password: Vikas@9100
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# JWT — MUST be overridden via the JWT_SECRET environment variable in production.
+# The auth-service rejects startup if JWT_SECRET is empty (Keys.hmacShaKeyFor fails).
+jwt:
+  secret: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+  expiration-ms: 86400000

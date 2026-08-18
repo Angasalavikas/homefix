@@ -1,0 +1,68 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-08-14T18:57:38.339+05:30  INFO 14140 --- [payment-service] [           main] c.h.p.PaymentServiceApplication          : Starting PaymentServiceApplication using Java 25.0.2 with PID 14140 (C:\homefix\payment-service\target\classes started by angas in C:\homefix\payment-service)
+2026-08-14T18:57:38.345+05:30 DEBUG 14140 --- [payment-service] [           main] c.h.p.PaymentServiceApplication          : Running with Spring Boot v4.1.0, Spring v7.0.8
+2026-08-14T18:57:38.346+05:30  INFO 14140 --- [payment-service] [           main] c.h.p.PaymentServiceApplication          : No active profile set, falling back to 1 default profile: "default"
+2026-08-14T18:57:40.175+05:30  INFO 14140 --- [payment-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-14T18:57:40.435+05:30  INFO 14140 --- [payment-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 245 ms. Found 1 JPA repository interface.
+2026-08-14T18:57:41.597+05:30  INFO 14140 --- [payment-service] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8086 (http)
+2026-08-14T18:57:41.624+05:30  INFO 14140 --- [payment-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-08-14T18:57:41.624+05:30  INFO 14140 --- [payment-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-08-14T18:57:41.804+05:30  INFO 14140 --- [payment-service] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 3352 ms
+2026-08-14T18:57:41.971+05:30 DEBUG 14140 --- [payment-service] [           main] c.h.p.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2026-08-14T18:57:42.319+05:30  INFO 14140 --- [payment-service] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-14T18:57:42.450+05:30  INFO 14140 --- [payment-service] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-08-14T18:57:43.276+05:30  INFO 14140 --- [payment-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-14T18:57:43.326+05:30  INFO 14140 --- [payment-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-08-14T18:57:44.050+05:30  INFO 14140 --- [payment-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4bdbfbc6
+2026-08-14T18:57:44.055+05:30  INFO 14140 --- [payment-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-08-14T18:57:44.153+05:30  WARN 14140 --- [payment-service] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-08-14T18:57:44.192+05:30  INFO 14140 --- [payment-service] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/homefix_payments]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.46
+	Default catalog/schema: homefix_payments/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-14T18:57:45.774+05:30  INFO 14140 --- [payment-service] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-14T18:57:45.925+05:30  INFO 14140 --- [payment-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-14T18:57:46.071+05:30  INFO 14140 --- [payment-service] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-14T18:57:46.692+05:30  WARN 14140 --- [payment-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-08-14T18:57:47.272+05:30  WARN 14140 --- [payment-service] [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 4f88850e-24d0-4792-a260-d854ddd91fe3
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-08-14T18:57:47.286+05:30  INFO 14140 --- [payment-service] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-08-14T18:57:48.366+05:30  WARN 14140 --- [payment-service] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-08-14T18:57:48.970+05:30  INFO 14140 --- [payment-service] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8086 (http) with context path '/'
+2026-08-14T18:57:49.001+05:30  INFO 14140 --- [payment-service] [           main] c.h.p.PaymentServiceApplication          : Started PaymentServiceApplication in 12.805 seconds (process running for 14.587)
+2026-08-14T18:58:49.854+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-14T18:58:49.855+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-08-14T18:58:49.857+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-08-14T18:59:31.388+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-3] c.h.p.service.PaymentService             : Razorpay order order_TPfOBJ4IzXI6AC created for booking 37
+2026-08-14T19:01:20.958+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-5] c.h.p.service.PaymentService             : Razorpay order order_TPfQ6PZBJxXFOF created for booking 38
+2026-08-14T19:01:55.009+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-6] c.h.p.service.PaymentService             : Payment success notification sent for booking 38
+2026-08-14T19:01:55.155+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-6] c.h.p.service.PaymentService             : Booking 38 paymentStatus updated to PAID (lifecycle status unchanged)
+2026-08-14T19:03:17.232+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-8] c.h.p.service.PaymentService             : Razorpay order order_TPfS90NlhaQ367 created for booking 39
+2026-08-14T19:03:36.183+05:30  INFO 14140 --- [payment-service] [nio-8086-exec-9] c.h.p.service.PaymentService             : Razorpay order order_TPfSUS0OItPVQK created for booking 39
+2026-08-14T19:03:59.973+05:30  INFO 14140 --- [payment-service] [io-8086-exec-10] c.h.p.service.PaymentService             : Payment success notification sent for booking 39
+2026-08-14T19:04:00.109+05:30  INFO 14140 --- [payment-service] [io-8086-exec-10] c.h.p.service.PaymentService             : Booking 39 paymentStatus updated to PAID (lifecycle status unchanged)
+2026-08-14T19:51:08.838+05:30  WARN 14140 --- [payment-service] [l-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=21m54s140ms612µs500ns).
+2026-08-14T21:23:18.104+05:30  WARN 14140 --- [payment-service] [l-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h32m9s266ms466µs700ns).
+2026-08-14T22:17:43.740+05:30  WARN 14140 --- [payment-service] [l-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=31m55s467ms246µs800ns).
+2026-08-14T22:23:34.156+05:30  WARN 14140 --- [payment-service] [l-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2m49s248ms328µs300ns).

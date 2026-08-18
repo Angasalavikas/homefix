@@ -1,0 +1,25 @@
+package com.homefix.servicecatalogservice.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CategoryRequest {
+
+    @NotBlank(message = "Category name is required")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
+    private String name;
+
+    @Size(max = 500, message = "Description must be at most 500 characters")
+    private String description;
+
+    @Size(max = 255, message = "Icon URL must be at most 255 characters")
+    private String icon;
+}

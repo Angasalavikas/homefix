@@ -1,0 +1,22 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-08-03T22:24:35.645+05:30  INFO 29536 --- [config-server] [           main] c.h.c.ConfigServerApplication            : Starting ConfigServerApplication v0.0.1-SNAPSHOT using Java 25.0.2 with PID 29536 (C:\homefix\config-server\target\config-server-0.0.1-SNAPSHOT.jar started by angas in C:\homefix\config-server)
+2026-08-03T22:24:35.651+05:30 DEBUG 29536 --- [config-server] [           main] c.h.c.ConfigServerApplication            : Running with Spring Boot v4.1.0, Spring v7.0.8
+2026-08-03T22:24:35.652+05:30  INFO 29536 --- [config-server] [           main] c.h.c.ConfigServerApplication            : The following 1 profile is active: "native"
+2026-08-03T22:24:37.120+05:30  INFO 29536 --- [config-server] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8888 (http)
+2026-08-03T22:24:37.154+05:30  INFO 29536 --- [config-server] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-08-03T22:24:37.154+05:30  INFO 29536 --- [config-server] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-08-03T22:24:37.186+05:30  INFO 29536 --- [config-server] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1453 ms
+2026-08-03T22:24:38.506+05:30  INFO 29536 --- [config-server] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8888 (http) with context path '/'
+2026-08-03T22:24:38.545+05:30  INFO 29536 --- [config-server] [           main] c.h.c.ConfigServerApplication            : Started ConfigServerApplication in 3.565 seconds (process running for 4.19)
+2026-08-03T22:26:10.065+05:30  INFO 29536 --- [config-server] [nio-8888-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-03T22:26:10.066+05:30  INFO 29536 --- [config-server] [nio-8888-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-08-03T22:26:10.067+05:30  INFO 29536 --- [config-server] [nio-8888-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
