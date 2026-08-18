@@ -1,0 +1,43 @@
+# ============================================================
+# Shared configuration for all HomeFix microservices
+# Served by config-server (native profile)
+# ============================================================
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    initial-instance-info-replication-interval-seconds: 10
+    registry-fetch-interval-seconds: 5
+
+logging:
+  level:
+    com.homefix: DEBUG
+    org.springframework.cloud: WARN
+    com.netflix: WARN
+    org.hibernate.SQL: WARN
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+
+# ============================================================
+# JWT Configuration (consumed by auth-service)
+# ============================================================
+jwt:
+  # MUST be set via the JWT_SECRET environment variable (all services share one key).
+  # Generate with: openssl rand -base64 64
+    secret: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+    expiration-ms: 86400000
